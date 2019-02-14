@@ -1,0 +1,62 @@
+# ansible setup
+# on host01, install ansible
+yum install ansible -yum
+
+# add the following to the /etc/ansible/hosts file
+[postgres-servers]
+host01
+host02
+host03
+
+# as the admin user, copy id_rsa.pub to authorized_keys
+cd .ssh
+cat id_rsa.pub >> authorized_keys
+
+# check that all nodes can be contacted
+ansible all -m ping -u admin
+
+host03 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+host02 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+host01 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+
+# run a playbook in check mode
+ansible-playbook /home/admin/ansible/roles/postgres_repo.yml --check --ask-become-pass
+
+ansible-playbook /home/admin/ansible/roles/postgres_install.yml --check --ask-become-pass
+
+# create an enrypted password.yml file to hold the admin password
+ansible-vault create password.yml
+
+# when prompted for a password, enter the password twice for the above command
+# then enter the password for the admin user
+
+# in the hosts file, add the following:
+[postgres-servers:vars]
+ansible_become=yes
+ansible_become_pass='{{ passwd }}'
+ansible_user=admin
+
+[postgres-servers]
+host01
+host02
+host03
+
+# to enable the epel repo which will be required for additional packages, run the epel playbook
+# add the --check flag to check for errors in the playbook
+ansible-playbook /home/admin/ansible/roles/epel_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+# install python-pip, upgrade if required, and psycopg2
+ansible-playbook /home/admin/ansible/roles/psycopg2_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+# install PostgreSQL 10/11 repos and packages
+ansible-playbook /home/admin/ansible/roles/postgres_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
