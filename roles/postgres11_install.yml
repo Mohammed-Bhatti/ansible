@@ -1,0 +1,33 @@
+---
+- hosts: postgres-servers
+
+  tasks:
+    - name: Install the PostgreSQL 10 and 11 repos
+      yum:
+        name: "{{ url }}"
+        state: present
+      vars:
+        url:
+        - https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat11-11-2.noarch.rpm
+        - https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-redhat10-10-2.noarch.rpm
+
+    - name: Remove PostgreSQL 10
+      yum:
+        name: "{{ pkg_name }}"
+        state: removed
+      vars:
+        pkg_name:
+        - postgresql0-server
+        - postgresql10-contrib
+        - postgresql10-devel
+        - postgresql10-libs
+
+    - name: Install PostgreSQL 11
+      yum:
+        name: "{{ pkg_name }}"
+        state: latest
+      vars:
+        pkg_name:
+        - postgresql11-server
+        - postgresql11-contrib
+        - postgresql11-devel
