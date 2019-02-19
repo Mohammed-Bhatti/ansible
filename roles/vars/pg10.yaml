@@ -1,0 +1,4 @@
+---
+debug: 1
+postgresql_data_dir: "/data/pg10/data"
+postgresql_bin_path: "/usr/pgsql-10/bin"
