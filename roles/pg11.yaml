@@ -1,6 +1,0 @@
----
-debug: 1
-postgresql_data_dir:
-  - /data/pg11/data
-postgresql_bin_path:
-  - /usr/pgsql-11/bin
