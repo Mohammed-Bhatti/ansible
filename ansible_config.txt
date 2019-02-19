@@ -58,5 +58,24 @@ ansible-playbook /home/admin/ansible/roles/epel_install.yml --ask-vault-pass --e
 ansible-playbook /home/admin/ansible/roles/psycopg2_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
 
 # install PostgreSQL 10/11 repos and packages
-ansible-playbook /home/admin/ansible/roles/postgres_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+ansible-playbook /home/admin/ansible/roles/postgres10_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+ansible-playbook /home/admin/ansible/roles/postgres11_install.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+# create the PostgreSQL 10/11 directory structure that we want
+ansible-playbook /home/admin/ansible/roles/dir_setup.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+# initialize the PostgreSQL database
+ansible-playbook /home/admin/ansible/roles/postgres_init.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml' \
+--extra-vars "postgresql_data_dir=/data/pg10/data postgresql_bin_path=/usr/pgsql-10/bin" --check
+
+# initialize the PostgreSQL database using the appropriate vars file
+ansible-playbook /home/admin/ansible/roles/postgres_init.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml' \
+--extra-vars "@/home/admin/ansible/roles/vars/pg10.yaml" --check
+ 
+# debug
+ansible-playbook /home/admin/ansible/roles/debug.yml --ask-vault-pass --extra-vars '@/home/admin/ansible/password.yml'
+
+
+
 

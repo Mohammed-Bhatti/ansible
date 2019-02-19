@@ -1,5 +1,19 @@
-tasks:
-  - name: Install EPEL
-    yum:
-      name: epel-release
-      state: latest
+---
+- hosts: postgres-servers
+#  vars:
+#    ansible_become: yes
+#    ansible_become_pass: '{{ passwd }}'
+#    ansible_user: admin
+  tasks:
+    - name: Install python-pip
+      yum: 
+        name: python-pip
+        state: latest
+    - name: Upgrade pip
+      shell: /bin/pip install --upgrade pip
+      args:
+        executable: /bin/bash
+    - name: Install psycopg2
+      shell: /bin/pip install psycopg2 
+      args:
+        executable: /bin/bash

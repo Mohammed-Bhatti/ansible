@@ -1,0 +1,14 @@
+---
+- hosts: postgres-servers
+  tasks:
+  - name: test debug
+    debug:
+      msg: "hello world"
+
+#- hosts: postgres-servers
+#  tasks:
+#    - name: Install python-pip
+#      yum:
+#        name: python-pip
+#        state: latest
+

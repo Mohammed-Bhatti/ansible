@@ -3,7 +3,7 @@
 
   tasks:
     - name: Install the PostgreSQL 10 and 11 repos
-      yum:
+      yum: 
         name: "{{ url }}"
         state: present
       vars:
@@ -32,3 +32,10 @@
         - postgresql10-contrib
         - postgresql10-devel
 
+    - name: Copy bash_profile
+      copy:
+        src: /home/admin/ansible/roles/files/bash_profile10
+        dest: /var/lib/pgsql/.bash_profile
+        owner: postgres
+        group: postgres
+        mode: 0700

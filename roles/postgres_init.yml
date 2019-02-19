@@ -1,0 +1,35 @@
+---
+- hosts: postgres-servers
+
+  tasks:
+    - name: Ensure PostgreSQL data directory exists
+      file: 
+        path: "{{ postgresql_data_dir }}"
+        state: directory
+
+    - name: Check if PostgreSQL database is initialized
+      stat:
+        path: "{{ postgresql_data_dir }}/PG_VERSION"
+      register: pgdata_dir_version
+
+    - name: Ensure PostgreSQL database is initialized
+      command: "{{ postgresql_bin_path }}/initdb -D {{ postgresql_data_dir }}"
+      when: not pgdata_dir_version.stat.exists
+      become: true
+      become_user: postgres
+
+    - name: Check if cluster is running
+      stat:
+        path: "{{ postgresql_data_dir }}/postmaster.pid"
+      register: pgcluster_running
+
+    - name: test debug
+      debug:
+        var: pgcluster_running
+        verbosity: 2
+
+    - name: Start the database cluster
+      command: "{{ postgresql_bin_path }}/pg_ctl start -D {{ postgresql_data_dir }}"
+      when: not pgcluster_running.stat.exists
+      become: true
+      become_user: postgres

@@ -1,7 +1,6 @@
 - hosts: postgres-servers
   tasks:
     - name: Install EPEL
-      yum:
+      yum: 
         name: epel-release
         state: latest
-

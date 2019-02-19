@@ -1,0 +1,29 @@
+---
+- hosts: postgres-servers
+
+  tasks:
+    - name: Create data directory
+      file:
+        path: /data
+        state: directory
+        group: root
+        owner: root
+        mode: 0755
+
+    - name: Create sub directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        group: postgres
+        owner: postgres
+        recurse: yes
+        mode: 0700
+      with_items:
+          - /data/pg10/data
+          - /data/pg10/archive
+          - /data/pg10/backups
+          - /data/pg10/setup
+          - /data/pg11/data
+          - /data/pg11/archive
+          - /data/pg11/backups
+          - /data/pg11/setup
